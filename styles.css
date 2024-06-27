@@ -1,0 +1,86 @@
+/* styles.css */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.auth-form {
+    margin-bottom: 20px;
+}
+
+.auth-form input,
+.auth-form button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.auth-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.auth-form button:hover {
+    background-color: #0056b3;
+}
+
+.hidden {
+    display: none;
+}
+
+.project-form,
+.task-form {
+    margin-bottom: 20px;
+}
+
+.task-form input,
+.task-form select,
+.task-form button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.task-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.task-form button:hover {
+    background-color: #0056b3;
+}
+
+.task-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    list-style-type: none;
+}
+
+.low {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+.medium {
+    border-color: #ffc107;
+    background-color: #fff3cd;
+}
+
+.high {
+    border-color: #dc3545;
+    background-color: #f8d7da;
+}
