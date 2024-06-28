@@ -1,86 +1,61 @@
-/* styles.css */
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.auth-form {
-    margin-bottom: 20px;
-}
-
-.auth-form input,
-.auth-form button {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.auth-form button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.auth-form button:hover {
-    background-color: #0056b3;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
 }
 
 .hidden {
     display: none;
 }
 
-.project-form,
-.task-form {
-    margin-bottom: 20px;
+#auth, #task-manager {
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
 }
 
-.task-form input,
-.task-form select,
-.task-form button {
-    width: 100%;
+#task-manager {
+    width: 300px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, select, button {
     margin-bottom: 10px;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    font-size: 1em;
 }
 
-.task-form button {
-    background-color: #007bff;
-    color: white;
-    border: none;
+button {
     cursor: pointer;
 }
 
-.task-form button:hover {
-    background-color: #0056b3;
-}
-
 .task-item {
-    margin-bottom: 10px;
+    list-style: none;
     padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    list-style-type: none;
+    margin: 10px 0;
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-.low {
-    border-color: #28a745;
-    background-color: #d4edda;
+.task-item.low {
+    border-left: 5px solid green;
 }
 
-.medium {
-    border-color: #ffc107;
-    background-color: #fff3cd;
+.task-item.medium {
+    border-left: 5px solid orange;
 }
 
-.high {
-    border-color: #dc3545;
-    background-color: #f8d7da;
+.task-item.high {
+    border-left: 5px solid red;
 }
