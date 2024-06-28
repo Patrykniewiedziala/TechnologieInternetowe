@@ -14,11 +14,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoginLink = document.getElementById('show-login');
     const showRegisterLink = document.getElementById('show-register');
     const logoutBtn = document.getElementById('logout-btn');
+    const taskStatusSelect = document.getElementById('task-status');
 
     let tasks = [];
     let projects = [];
     let users = JSON.parse(localStorage.getItem('users')) || [];
     let currentUser = null;
+
+    const generateId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+    const showLoginForm = () => {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+    };
+
+    const showRegisterForm = () => {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+    };
 
     const renderTasks = () => {
         taskList.innerHTML = '';
@@ -34,8 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>Opis: ${task.description}</p>
                 <span>Deadline: ${task.dueDate}</span>
                 <span>Przypisany użytkownik: ${assignedUser}</span>
+                <span>Status: ${task.status}</span>
                 <button onclick="editTask(${index})">Edytuj</button>
                 <button onclick="deleteTask(${index})">Usuń</button>
+                <select onchange="changeTaskStatus(${index}, this.value)">
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                </select>
             `;
 
             taskItem.classList.add(task.priority);
@@ -50,15 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
         projects.forEach(project => {
             const projectItem = document.createElement('li');
             projectItem.textContent = project.name;
-            projectItem.style.cursor = 'pointer'; // Ustawienie kursora na wskaźnik (ręka) dla elementu klikalnego
+            projectItem.style.cursor = 'pointer';
 
-            // Dodanie przycisku usuwania projektu
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Usuń';
             deleteButton.addEventListener('click', () => deleteProject(project.id));
 
             projectItem.appendChild(deleteButton);
-            projectItem.addEventListener('click', () => renderTasksForProject(project.id)); // Dodanie nasłuchiwacza kliknięć
+            projectItem.addEventListener('click', () => renderTasksForProject(project.id));
             projectList.appendChild(projectItem);
 
             const projectOption = document.createElement('option');
@@ -84,8 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span>${task.dueDate}</span>
                 <span>${projectName}</span>
                 <span>Przypisany użytkownik: ${assignedUser}</span>
+                <span>Status: ${task.status}</span>
                 <button onclick="editTask(${index})">Edytuj</button>
                 <button onclick="deleteTaskFromProject(${projectId}, ${index})">Usuń z projektu</button>
+                <select onchange="changeTaskStatus(${index}, this.value)">
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                </select>
             `;
 
             taskItem.classList.add(task.priority);
@@ -101,7 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dueDate = document.getElementById('task-date').value;
         const dueTime = document.getElementById('task-time').value;
         const projectId = document.getElementById('task-project').value;
-        const userId = document.getElementById('task-user').value; // Upewnij się, że pobierasz prawidłową wartość userId
+        const userId = document.getElementById('task-user').value;
+        const status = 'todo';
     
         if (title && description && dueDate && dueTime) {
             const newTask = { 
@@ -111,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 dueDate, 
                 dueTime, 
                 projectId, 
-                userId,  // Przypisanie użytkownika do zadania
+                userId,  
+                status,
                 reminded: false 
             };
             tasks.push(newTask);
@@ -138,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addTaskBtn.removeEventListener('click', addTask);
         addTaskBtn.addEventListener('click', () => saveEditedTask(index));
     };
+    window.editTask = editTask;
 
     const saveEditedTask = (index) => {
         const title = document.getElementById('task-title').value;
@@ -147,6 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dueTime = document.getElementById('task-time').value;
         const projectId = document.getElementById('task-project').value;
         const userId = document.getElementById('task-user').value;
+        const status = tasks[index].status;
 
         if (title && description && dueDate && dueTime) {
             tasks[index] = {
@@ -157,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 dueTime,
                 projectId,
                 userId,
+                status,
                 reminded: false
             };
             renderTasks();
@@ -177,19 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
         saveData();
     };
 
-    window.editTask = editTask;
-    window.deleteTask = deleteTask;
-
-
     const deleteTaskFromProject = (projectId, taskIndex) => {
-        const project = projects.find(proj => proj.id === projectId);
-        if (project) {
-            project.tasks.splice(taskIndex, 1); // Usunięcie zadania z tablicy zadań projektu
-            renderTasksForProject(projectId); // Ponowne renderowanie zadań dla danego projektu
-            saveData(); // Zapisanie zmienionych danych
-        } else {
-            console.error('Project not found');
-        }
+        tasks = tasks.filter((task, index) => !(task.projectId === projectId && index === taskIndex));
+        renderTasksForProject(projectId);
+        saveData();
     };
 
     const addProject = () => {
@@ -201,13 +221,18 @@ document.addEventListener('DOMContentLoaded', () => {
             saveData();
             document.getElementById('project-name').value = '';
         } else {
-            alert('Proszę podać nazwę projektu');
+            alert('Proszę wpisać nazwę projektu');
         }
     };
 
     const deleteProject = (projectId) => {
         projects = projects.filter(project => project.id !== projectId);
-        tasks = tasks.filter(task => task.projectId !== projectId);
+        tasks = tasks.map(task => {
+            if (task.projectId === projectId) {
+                return { ...task, projectId: null };
+            }
+            return task;
+        });
         renderProjects();
         renderTasks();
         saveData();
@@ -221,10 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('task-time').value = '';
         document.getElementById('task-project').value = '';
         document.getElementById('task-user').value = '';
-    };
-
-    const generateId = () => {
-        return '_' + Math.random().toString(36).substr(2, 9);
     };
 
     const saveData = () => {
@@ -252,83 +273,80 @@ document.addEventListener('DOMContentLoaded', () => {
             renderUsersSelect(); // Aktualizacja listy użytkowników w formularzu zadania
         }
         window.deleteTaskFromProject = deleteTaskFromProject;
+        window.deleteTask = deleteTask;
     };
 
-    const renderUsersSelect = () => {
-        const taskUserSelect = document.getElementById('task-user');
-        taskUserSelect.innerHTML = '<option value="">Przypisz użytkownika</option>';
-        users.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.id;
-            option.textContent = user.username;
-            taskUserSelect.appendChild(option);
-        });
+    const changeTaskStatus = (index, newStatus) => {
+        tasks[index].status = newStatus;
+        renderTasks();
+        saveData();
     };
 
-    const login = () => {
-        const username = document.getElementById('login-username').value;
-        const password = document.getElementById('login-password').value;
+    window.changeTaskStatus = changeTaskStatus;
 
+    addTaskBtn.addEventListener('click', addTask);
+    addProjectBtn.addEventListener('click', addProject);
+
+    const login = (username, password) => {
         const user = users.find(user => user.username === username && user.password === password);
         if (user) {
             currentUser = user;
+            taskManager.classList.remove('hidden');
             loginForm.classList.add('hidden');
             registerForm.classList.add('hidden');
-            taskManager.classList.remove('hidden');
-            logoutBtn.classList.remove('hidden');
-            loadData(); // Załaduj dane po zalogowaniu
+            renderTasks();
+            renderProjects();
+            document.querySelector('.task-form select#task-user').value = currentUser.id;
         } else {
-            alert('Nieprawidłowa nazwa użytkownika lub hasło');
+            alert('Nieprawidłowe dane logowania');
         }
     };
 
-    const logout = () => {
-        currentUser = null;
-        tasks = [];
-        projects = [];
-        taskList.innerHTML = '';
-        projectList.innerHTML = '';
-        taskProjectSelect.innerHTML = '<option value="">Wybierz projekt</option>';
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        taskManager.classList.add('hidden');
-        logoutBtn.classList.add('hidden');
+    const register = (username, password) => {
+        if (users.find(user => user.username === username)) {
+            alert('Nazwa użytkownika już istnieje');
+            return;
+        }
+
+        const newUser = { id: generateId(), username, password };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Rejestracja zakończona sukcesem. Możesz się teraz zalogować.');
+        showLoginForm();
     };
 
-    const register = () => {
+    loginBtn.addEventListener('click', () => {
+        const username = document.getElementById('login-username').value;
+        const password = document.getElementById('login-password').value;
+        login(username, password);
+    });
+
+    registerBtn.addEventListener('click', () => {
         const username = document.getElementById('register-username').value;
         const password = document.getElementById('register-password').value;
+        register(username, password);
+    });
 
-        if (username && password) {
-            const newUser = { id: generateId(), username, password };
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            alert('Zarejestrowano pomyślnie. Możesz teraz się zalogować.');
-            showLoginForm();
-        } else {
-            alert('Proszę podać nazwę użytkownika i hasło');
-        }
-    };
-
-    const showRegisterForm = () => {
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-    };
-
-    const showLoginForm = () => {
-        registerForm.classList.add('hidden');
-        loginForm.classList.remove('hidden');
-    };
-
-    // Nasłuchiwacze zdarzeń
-    addTaskBtn.addEventListener('click', addTask);
-    addProjectBtn.addEventListener('click', addProject);
-    loginBtn.addEventListener('click', login);
-    registerBtn.addEventListener('click', register);
-    showRegisterLink.addEventListener('click', showRegisterForm);
     showLoginLink.addEventListener('click', showLoginForm);
-    logoutBtn.addEventListener('click', logout);
+    showRegisterLink.addEventListener('click', showRegisterForm);
 
-    // Załaduj dane po pierwszym otwarciu aplikacji
+    logoutBtn.addEventListener('click', () => {
+        currentUser = null;
+        taskManager.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+    });
+
+    const renderUsersSelect = () => {
+        const userSelect = document.getElementById('task-user');
+        userSelect.innerHTML = '<option value="">Przypisz użytkownika</option>';
+        users.forEach(user => {
+            const userOption = document.createElement('option');
+            userOption.value = user.id;
+            userOption.textContent = user.username;
+            userSelect.appendChild(userOption);
+        });
+    };
+
     loadData();
 });
