@@ -3,54 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zarządzanie zadaniami</title>
+    <title>Task Manager</title>
+    <link rel="icon" type="image/x-icon" href="/img/logo.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="auth">
-        <form id="login-form" class="login-from">
-            <h2>TaskManager</h2>
-            <h2>Logowanie</h2>
-            <input type="text" id="login-username" placeholder="Nazwa użytkownika" required>
-            <input type="password" id="login-password" placeholder="Hasło" required>
-            <button type="button" id="login-btn">Zaloguj się</button>
-            <p>Nie masz konta? <a href="#" id="show-register">Zarejestruj się</a></p>
+    <div id="auth" class="container">
+        <form id="login-form">
+            <h2>Login</h2>
+            <input type="text" id="login-username" placeholder="Username">
+            <input type="password" id="login-password" placeholder="Password">
+            <button type="button" id="login-btn">Login</button>
+            <p>Don't have an account? <a href="#" id="show-register">Register</a></p>
         </form>
         <form id="register-form" class="hidden">
-            <h2>Rejestracja</h2>
-            <input type="text" id="register-username" placeholder="Nazwa użytkownika" required>
-            <input type="password" id="register-password" placeholder="Hasło" required>
-            <button type="button" id="register-btn">Zarejestruj się</button>
-            <p>Masz już konto? <a href="#" id="show-login">Zaloguj się</a></p>
+            <h2>Register</h2>
+            <input type="text" id="register-username" placeholder="Username">
+            <input type="password" id="register-password" placeholder="Password">
+            <button type="button" id="register-btn">Register</button>
+            <p>Already have an account? <a href="#" id="show-login">Login</a></p>
         </form>
     </div>
-    <div id="task-manager" class="hidden">
-        <div class="project-form">
-            <input type="text" id="project-name" placeholder="Nazwa projektu">
-            <button id="add-project-btn">Dodaj projekt</button>
-        </div>
-        <div class="task-form">
-            <h3 id="task-status">Dodaj zadanie</h3>
-            <input type="text" id="task-title" placeholder="Tytuł zadania">
-            <input type="text" id="task-desc" placeholder="Opis">
+    <div id="task-manager" class="container hidden">
+        <button id="logout-btn-top">Logout</button>
+        <h2>Task Manager</h2>
+        <button id="logout-btn">Logout</button>
+        <form class="project-form">
+            <h3>Add Project</h3>
+            <input type="text" id="project-name" placeholder="Project Name">
+            <button type="button" id="add-project-btn">Add Project</button>
+        </form>
+        <ul id="project-list"></ul>
+        <form class="task-form">
+            <h3>Task</h3>
+            <input type="text" id="task-title" placeholder="Task Title">
+            <input type="text" id="task-desc" placeholder="Task Description">
             <select id="task-priority">
-                <option value="low">Niski</option>
-                <option value="medium">Średni</option>
-                <option value="high">Wysoki</option>
+                <option value="low">Low Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="high">High Priority</option>
             </select>
             <input type="date" id="task-date">
             <input type="time" id="task-time">
-            <select id="task-user">
-                <option value="">Przypisz użytkownika</option>
-            </select>
-            <select id="task-project">
-                <option value="">Wybierz projekt</option>
-            </select>
-            <button id="add-task-btn">Dodaj zadanie</button>
-        </div>
-        <ul id="project-list"></ul>
+            <select id="task-project"></select>
+            <select id="task-user"></select>
+            <button type="button" id="add-task-btn">Add Task</button>
+        </form>
         <ul id="task-list"></ul>
-        <button id="logout-btn">Wyloguj</button>
     </div>
     <script src="script.js"></script>
 </body>
