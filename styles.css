@@ -2,7 +2,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
-    padding: 50px 0; /* Added more padding to the top */
+    padding: 50px 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,7 +15,6 @@ body {
     display: none;
 }
 
-/* Container for forms and task manager */
 .container {
     background: white;
     padding: 20px;
@@ -86,7 +85,6 @@ form a:hover {
     text-decoration: underline;
 }
 
-/* Task Manager */
 #task-manager {
     background: white;
     padding: 20px;

@@ -46,9 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <strong>${task.title}</strong> - ${task.description}<br>
                 <small>Priority: ${task.priority} | Due: ${task.date} ${task.time} | Project: ${projectName} | Assigned to: ${assignedUser}</small><br>
                 <select onchange="changeTaskStatus(${index}, this.value)">
-                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
-                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
-                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>To do</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>In progress</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Done</option>
                 </select>
                 <button data-index="${index}">Delete</button>
                 <button class="edit-task-btn" data-index="${index}">Edit</button>
@@ -139,22 +139,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const taskItem = document.createElement('li');
             taskItem.classList.add('task-item');
 
-            const projectName = projects.find(project => project.id === task.projectId)?.name || 'Brak projektu';
-            const assignedUser = users.find(user => user.id === task.userId)?.username || 'Nieprzypisany';
+            const projectName = projects.find(project => project.id === task.projectId)?.name || 'No project';
+            const assignedUser = users.find(user => user.id === task.userId)?.username || 'Unassigned';
 
             taskItem.innerHTML = `
                 <strong>${task.title}</strong>
                 <p>${task.description}</p>
                 <span>${task.dueDate}</span>
                 <span>${projectName}</span>
-                <span>Przypisany użytkownik: ${assignedUser}</span>
+                <span>Assigned user: ${assignedUser}</span>
                 <span>Status: ${task.status}</span>
                 <button onclick="editTask(${index})">Edytuj</button>
-                <button onclick="deleteTaskFromProject(${projectId}, ${index})">Usuń z projektu</button>
+                <button onclick="deleteTaskFromProject(${projectId}, ${index})">Delete from project</button>
                 <select>
-                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
-                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
-                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>To do</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>In progress</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Done</option>
                 </select>
             `;
 
@@ -280,12 +280,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showRegisterForm();
     });
 
-    // Load tasks and projects from local storage on page load
     tasks = JSON.parse(localStorage.getItem('tasks')) || [];
     projects = JSON.parse(localStorage.getItem('projects')) || [];
 
     if (users.length === 0) {
-        // For demonstration purposes, create a default user
         const defaultUser = { id: generateId(), username: 'admin', password: 'admin' };
         users.push(defaultUser);
         saveUsers();
