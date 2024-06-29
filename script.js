@@ -45,6 +45,11 @@ document.addEventListener('DOMContentLoaded', () => {
             taskItem.innerHTML = `
                 <strong>${task.title}</strong> - ${task.description}<br>
                 <small>Priority: ${task.priority} | Due: ${task.date} ${task.time} | Project: ${projectName} | Assigned to: ${assignedUser}</small><br>
+                <select onchange="changeTaskStatus(${index}, this.value)">
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                </select>
                 <button data-index="${index}">Delete</button>
                 <button class="edit-task-btn" data-index="${index}">Edit</button>
             `;
@@ -84,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveProjects();
                 renderProjects();
             });
+
+            projectItem.addEventListener('click', () => {
+                renderTasksForProject(project.id);
+            });
         });
     };
 
@@ -117,11 +126,51 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('task-time').value = time;
         document.getElementById('task-project').value = projectId;
         document.getElementById('task-user').value = userId;
-
+        document.getElementById('add-task-btn').textContent = "Save"
         tasks.splice(index, 1);
         saveTasks();
         renderTasks();
     };
+
+    const renderTasksForProject = (projectId) => {
+        const filteredTasks = tasks.filter(task => task.projectId === projectId);
+        taskList.innerHTML = '';
+        filteredTasks.forEach((task, index) => {
+            const taskItem = document.createElement('li');
+            taskItem.classList.add('task-item');
+
+            const projectName = projects.find(project => project.id === task.projectId)?.name || 'Brak projektu';
+            const assignedUser = users.find(user => user.id === task.userId)?.username || 'Nieprzypisany';
+
+            taskItem.innerHTML = `
+                <strong>${task.title}</strong>
+                <p>${task.description}</p>
+                <span>${task.dueDate}</span>
+                <span>${projectName}</span>
+                <span>Przypisany użytkownik: ${assignedUser}</span>
+                <span>Status: ${task.status}</span>
+                <button onclick="editTask(${index})">Edytuj</button>
+                <button onclick="deleteTaskFromProject(${projectId}, ${index})">Usuń z projektu</button>
+                <select>
+                    <option value="todo" ${task.status === 'todo' ? 'selected' : ''}>Do zrobienia</option>
+                    <option value="inprogress" ${task.status === 'inprogress' ? 'selected' : ''}>W trakcie</option>
+                    <option value="done" ${task.status === 'done' ? 'selected' : ''}>Zrobione</option>
+                </select>
+            `;
+
+            taskItem.classList.add(task.priority);
+            taskList.appendChild(taskItem);
+        });
+    };
+
+    const changeTaskStatus = (index, newStatus) => {
+        tasks[index].status = newStatus;
+        renderTasks();
+        saveTasks();
+    };
+
+    window.changeTaskStatus = changeTaskStatus;
+    
 
     loginBtn.addEventListener('click', () => {
         const username = document.getElementById('login-username').value;
@@ -167,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = null;
     });
 
-    addProjectBtn.addEventListener('click', () => {
+   addProjectBtn.addEventListener('click', () => {
         const projectName = document.getElementById('project-name').value;
         if (projectName) {
             const newProject = { id: generateId(), name: projectName };
