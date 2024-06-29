@@ -163,6 +163,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    const deleteTaskFromProject = (projectId, taskIndex) => {
+        tasks = tasks.filter((task, index) => !(task.projectId === projectId && index === taskIndex));
+        renderTasksForProject(projectId);
+        saveData();
+    };
     const changeTaskStatus = (index, newStatus) => {
         tasks[index].status = newStatus;
         renderTasks();
@@ -170,7 +175,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.changeTaskStatus = changeTaskStatus;
-    
+    window.editTask = editTask;
+    window.deleteTaskFromProject = deleteTaskFromProject;
 
     loginBtn.addEventListener('click', () => {
         const username = document.getElementById('login-username').value;
